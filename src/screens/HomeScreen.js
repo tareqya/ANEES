@@ -21,7 +21,7 @@ import {
   GALLERY_SECONDARY1_IMAGE,
   GALLERY_SECONDARY2_IMAGE,
 } from "../../assets/images";
-import { SHAVING, HAIRCUT } from "../utils/constens";
+import { SHAVING, HAIRCUT, location } from "../utils/constens";
 
 import Divider from "../components/Divider";
 import Service from "../components/Service";
@@ -37,24 +37,24 @@ class HomeScreen extends Component {
   render() {
     return (
       <View style={styles.continer}>
-        <View style={styles.header}>
-          <View style={styles.profileImageWrapper}>
-            <Image
-              source={PROFILE_IMAGE}
-              style={styles.profileImage}
-              resizeMode="contain"
-            />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.header}>
+            <View style={styles.profileImageWrapper}>
+              <Image
+                source={PROFILE_IMAGE}
+                style={styles.profileImage}
+                resizeMode="contain"
+              />
+            </View>
+            <View>
+              <Text style={styles.name}>שלום אחמד,</Text>
+              <Text style={styles.welcome}>
+                בואו נהפוך את השיער שלך לאטרקטיבי
+              </Text>
+            </View>
           </View>
-          <View>
-            <Text style={styles.name}>שלום אחמד,</Text>
-            <Text style={styles.welcome}>
-              בואו נהפוך את השיער שלך לאטרקטיבי
-            </Text>
-          </View>
-        </View>
 
-        <View style={styles.body}>
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.body}>
             <View style={styles.salonImageWrapper}>
               <Image
                 style={styles.salonImage}
@@ -65,7 +65,7 @@ class HomeScreen extends Component {
 
             <View style={styles.detailsWrapper}>
               <View style={styles.locationWrapper}>
-                <Text style={styles.locationText}>שפרעם אלעין</Text>
+                <Text style={styles.locationText}>{location}</Text>
                 <EvilIcons size={30} color={COLORS.lightText} name="location" />
               </View>
               <View style={styles.locationWrapper}>
@@ -90,7 +90,7 @@ class HomeScreen extends Component {
                   <Image
                     source={GALLERY_PRIMARY_IMAGE}
                     style={styles.galleryPrimaryImage}
-                    resizeMode="stretch"
+                    resizeMode="cover"
                   />
                 </View>
                 <View style={styles.gallerySmallPhotosWrapper}>
@@ -98,21 +98,21 @@ class HomeScreen extends Component {
                     <Image
                       source={GALLERY_SECONDARY1_IMAGE}
                       style={styles.gallerySecondaryImage}
-                      resizeMode="stretch"
+                      resizeMode="cover"
                     />
                   </View>
                   <View style={styles.gallerySecondaryImageWrapper}>
                     <Image
                       source={GALLERY_SECONDARY2_IMAGE}
                       style={styles.gallerySecondaryImage}
-                      resizeMode="stretch"
+                      resizeMode="cover"
                     />
                   </View>
                 </View>
               </View>
             </View>
-          </ScrollView>
-        </View>
+          </View>
+        </ScrollView>
       </View>
     );
   }

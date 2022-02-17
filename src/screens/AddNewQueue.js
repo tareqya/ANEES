@@ -30,6 +30,7 @@ import {
 
 import {
   convertDateToString,
+  compareDate,
   convertStringToDate,
   getFreeHours,
   convertMinsToHrsMins,
@@ -89,6 +90,7 @@ class AddNewQueue extends Component {
       noHoursAvailable: false,
       queueAddComplate: false,
       disable: false,
+      error: "",
     };
 
     this.db = new Database();
@@ -110,6 +112,13 @@ class AddNewQueue extends Component {
   }
 
   fetchBarberQueuesComplate = (queues) => {
+    if (queues == null) {
+      this.setState({
+        error: "אנא בדוק את חיבור האינטרנט שלך",
+        calcFreeHours: false,
+      });
+      return;
+    }
     const { selectedService } = this.state;
     const freeHours = getFreeHours(
       OPEN_TIME,
@@ -129,6 +138,20 @@ class AddNewQueue extends Component {
     const { selectedBarber, selectedDate, selectedService, selectedTime } =
       this.state;
 
+    const currentDate = new Date();
+    const currentTime = currentDate.getHours() + ":" + currentDate.getMinutes();
+    if (
+      compareDate(
+        convertDateToString(selectedDate),
+        selectedTime,
+        convertDateToString(currentDate),
+        currentTime
+      ) <= 0
+    ) {
+      this.setState({ error: "לא ניתן לקבוע תור בתאריך ישן" });
+      return;
+    }
+
     const end_time = convertMinsToHrsMins(
       convertStringHourToMin(selectedTime) + selectedService.time
     );
@@ -137,7 +160,7 @@ class AddNewQueue extends Component {
       convertDateToString(selectedDate),
       selectedTime,
       end_time,
-      selectedBarber.name,
+      selectedBarber.id,
       selectedService.name,
       WAITING_STATUS
     );
@@ -154,6 +177,7 @@ class AddNewQueue extends Component {
         calcFreeHours: true,
         availableHours: [],
         noHoursAvailable: false,
+        error: "",
       });
       this.db.getBarberQueuesByDate(
         convertDateToString(selectedDate),
@@ -171,6 +195,7 @@ class AddNewQueue extends Component {
         calcFreeHours: true,
         availableHours: [],
         noHoursAvailable: false,
+        error: "",
       });
       this.db.getBarberQueuesByDate(
         convertDateToString(date),
@@ -189,6 +214,7 @@ class AddNewQueue extends Component {
         calcFreeHours: true,
         availableHours: [],
         noHoursAvailable: false,
+        error: "",
       });
       this.db.getBarberQueuesByDate(
         convertDateToString(selectedDate),
@@ -221,6 +247,7 @@ class AddNewQueue extends Component {
       noHoursAvailable,
       queueAddComplate,
       disable,
+      error,
     } = this.state;
 
     return (
@@ -343,7 +370,9 @@ class AddNewQueue extends Component {
                 <TimePicker
                   hours={availableHours}
                   selectedTime={selectedTime}
-                  onTimeSelect={(time) => this.setState({ selectedTime: time })}
+                  onTimeSelect={(time) =>
+                    this.setState({ selectedTime: time, error: "" })
+                  }
                 />
               </View>
             </View>
@@ -368,6 +397,13 @@ class AddNewQueue extends Component {
             >
               להזמין תור
             </Button>
+            {error != "" ? (
+              <Message
+                msg={error}
+                alertType={"danger"}
+                textColor={COLORS.white}
+              />
+            ) : null}
           </View>
         </ScrollView>
       </View>
@@ -378,6 +414,7 @@ class AddNewQueue extends Component {
 const styles = StyleSheet.create({
   continer: {
     flex: 1,
+    backgroundColor: COLORS.background,
   },
   datePickerWrapper: {
     width: "90%",

@@ -11,6 +11,7 @@ import {
 } from "firebase/database";
 import { REJECT_STATUS } from "../utils/constens";
 import Queue from "./Queue";
+import { compareDate } from "../utils/utilsFunctions";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBI_AJsTbU6eps4gMZsdpBOCRVpWlKZQZ4",
@@ -42,14 +43,15 @@ class Database {
       const reference = child(ref(this.db), "Queues");
 
       const queuesRef = query(reference, orderByChild("date"), equalTo(date));
-      const queues = [];
+
       onValue(
         queuesRef,
         (snapshot) => {
+          const queues = [];
           for (var key in snapshot.val()) {
             const q = new Queue();
             if (
-              snapshot.val()[key].barberId == barber_id &&
+              snapshot.val()[key].barber_id == barber_id &&
               snapshot.val()[key].status != REJECT_STATUS
             ) {
               q.fill_data(snapshot.val()[key]);
@@ -64,6 +66,36 @@ class Database {
       );
     } catch (err) {
       console.log(err);
+      callBack(null);
+      return null;
+    }
+  };
+
+  getCustomerQueueByUid = async (customer_id, callBack = () => {}) => {
+    try {
+      const reference = child(ref(this.db), "Queues");
+      const customer_queuesRef = query(
+        reference,
+        orderByChild("customer_id"),
+        equalTo(customer_id)
+      );
+
+      onValue(customer_queuesRef, (snapshot) => {
+        const queues = [];
+        for (var key in snapshot.val()) {
+          const q = new Queue();
+          q.fill_data(snapshot.val()[key]);
+          queues.push(q);
+        }
+        queues.sort((a, b) =>
+          compareDate(a.date, a.start_time, b.date, b.start_time)
+        );
+        queues.reverse();
+        callBack(queues);
+      });
+    } catch (err) {
+      console.log(err);
+      callBack(null);
       return null;
     }
   };

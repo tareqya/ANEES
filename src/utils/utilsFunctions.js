@@ -54,3 +54,21 @@ export const convertMinsToHrsMins = (minutes) => {
   m = m < 10 ? "0" + m : m;
   return h + ":" + m;
 };
+
+export const compareDate = (strDate1, strTime1, strDate2, strTime2) => {
+  const date1 = convertStringToDate(strDate1);
+  const date2 = convertStringToDate(strDate2);
+  const time1 = convertStringHourToMin(strTime1);
+  const time2 = convertStringHourToMin(strTime2);
+
+  if (date1 > date2) return 1;
+  if (date2 > date1) return -1;
+  if (time1 > time2) return 1;
+  if (time2 > time1) return -1;
+  return 0;
+};
+
+export const changeDateFormat = (strDate) => {
+  const [year, month, day] = strDate.split("-");
+  return day + "/" + month;
+};

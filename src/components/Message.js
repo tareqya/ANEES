@@ -7,7 +7,7 @@ export const DangerAlertType = "danger";
 export const WarningAlertType = "warning";
 export const SuccessAlertType = "success";
 
-const Message = ({ msg, alertType }) => {
+const Message = ({ msg, alertType, textColor = COLORS.text }) => {
   var backgroundColor = COLORS.white;
   if (alertType == DangerAlertType) {
     backgroundColor = COLORS.danger;
@@ -18,7 +18,7 @@ const Message = ({ msg, alertType }) => {
   }
   return (
     <View style={[styles.continer, { backgroundColor }]}>
-      <Text style={styles.msg}>{msg}</Text>
+      <Text style={[styles.msg, { color: textColor }]}>{msg}</Text>
     </View>
   );
 };

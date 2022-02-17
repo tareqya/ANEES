@@ -5,6 +5,8 @@ export const RAZOR_IMAGE = require("./razor.png");
 export const GALLERY_PRIMARY_IMAGE = require("./image2.jpg");
 export const GALLERY_SECONDARY1_IMAGE = require("./image1.jpg");
 export const GALLERY_SECONDARY2_IMAGE = require("./image3.jpg");
+export const BOOKING_IMAGE = require("./booking.png");
+export const ERROR_IMAGE = require("./error.png");
 
 export const BARBER1 = require("./barber1.jpg");
 export const BARBER2 = require("./barber2.jpg");

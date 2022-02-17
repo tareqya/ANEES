@@ -10,12 +10,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Entypo from "react-native-vector-icons/Entypo";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Feather from "react-native-vector-icons/Feather";
+import Fontisto from "react-native-vector-icons/Fontisto";
 
 import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import StoreScreen from "../screens/StoreScreen";
-import QueueTrackerScreen from "../screens/QueueTrackerScreen";
+import TrackerScreen from "../screens/TrackerScreen";
 import AddNewQueue from "../screens/AddNewQueue";
+import PostsScreen from "../screens/PostsScreen";
 
 import { COLORS } from "../../assets/colors";
 
@@ -32,10 +34,23 @@ const HomeTabStack = () => {
   );
 };
 
+const TrackerTabStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="TrackerScreen" component={TrackerScreen} />
+      <Stack.Screen name="PostsScreen" component={PostsScreen} />
+    </Stack.Navigator>
+  );
+};
+
 const Tab = createBottomTabNavigator();
 
 const MainNavigation = () => {
-  const [badge, setBadge] = useState(0);
+  // const [badge, setBadge] = useState(0);
   const animation = useRef(new Animated.Value(1)).current;
 
   const startAnimation = () => {
@@ -101,21 +116,21 @@ const MainNavigation = () => {
       />
 
       <Tab.Screen
-        name="QueueTrackerScreen"
-        component={QueueTrackerScreen}
+        name="TrackerTabStack"
+        component={TrackerTabStack}
         options={() => {
           return {
-            tabBarBadge: badge > 0 ? badge : null,
+            // tabBarBadge: badge > 0 ? badge : null,
             tabBarIcon: ({ color, size, focused }) =>
               focused ? (
                 <View>
                   <View style={styles.iconTabBackground} />
                   <View style={styles.tabIconWrapper}>
-                    <MaterialIcons name="history" color={color} size={size} />
+                    <Fontisto name="bell" color={color} size={size} />
                   </View>
                 </View>
               ) : (
-                <MaterialIcons name="history" color={color} size={size} />
+                <Fontisto name="bell" color={color} size={size} />
               ),
           };
         }}

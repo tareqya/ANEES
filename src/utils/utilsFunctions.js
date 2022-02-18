@@ -72,3 +72,10 @@ export const changeDateFormat = (strDate) => {
   const [year, month, day] = strDate.split("-");
   return day + "/" + month;
 };
+
+export const isQueuePass = (strDate, strStartTime) => {
+  const d = new Date();
+  const current_time = d.getHours() + ":" + d.getMinutes();
+  const current_date = convertDateToString(d);
+  return compareDate(current_date, current_time, strDate, strStartTime) >= 1;
+};

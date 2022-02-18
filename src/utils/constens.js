@@ -4,3 +4,4 @@ export const WAITING_STATUS = "ממתין";
 export const APPROVE_STATUS = "אושר";
 export const REJECT_STATUS = "נדחה";
 export const location = "שפרעם אלעין";
+export const phoneNumber = "+972549448023";

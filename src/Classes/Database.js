@@ -8,10 +8,11 @@ import {
   query,
   child,
   orderByChild,
+  remove,
 } from "firebase/database";
 import { REJECT_STATUS } from "../utils/constens";
 import Queue from "./Queue";
-import { compareDate } from "../utils/utilsFunctions";
+import { compareDate, isQueuePass } from "../utils/utilsFunctions";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBI_AJsTbU6eps4gMZsdpBOCRVpWlKZQZ4",
@@ -54,7 +55,7 @@ class Database {
               snapshot.val()[key].barber_id == barber_id &&
               snapshot.val()[key].status != REJECT_STATUS
             ) {
-              q.fill_data(snapshot.val()[key]);
+              q.fill_data(snapshot.val()[key], key);
               queues.push(q);
             }
           }
@@ -84,8 +85,10 @@ class Database {
         const queues = [];
         for (var key in snapshot.val()) {
           const q = new Queue();
-          q.fill_data(snapshot.val()[key]);
-          queues.push(q);
+          q.fill_data(snapshot.val()[key], key);
+          if (!isQueuePass(q.date, q.start_time)) {
+            queues.push(q);
+          }
         }
         queues.sort((a, b) =>
           compareDate(a.date, a.start_time, b.date, b.start_time)
@@ -97,6 +100,15 @@ class Database {
       console.log(err);
       callBack(null);
       return null;
+    }
+  };
+
+  removeQueue = (key) => {
+    try {
+      const reference = child(ref(this.db), `Queues/${key}`);
+      remove(reference);
+    } catch (err) {
+      console.log(err);
     }
   };
 }

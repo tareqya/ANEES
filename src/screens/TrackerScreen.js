@@ -1,25 +1,24 @@
-import { isRTL } from "expo-localization";
 import React, { Component } from "react";
+import { isRTL } from "expo-localization";
 import {
   View,
   Text,
   StyleSheet,
-  FlatList,
   Image,
   Dimensions,
   Animated,
+  Linking,
+  Platform,
 } from "react-native";
 import QueueComp from "../components/QueueComp";
 import Message from "../components/Message";
 import Loading from "../components/Loading";
 import { COLORS } from "../../assets/colors";
 import { BOOKING_IMAGE, ERROR_IMAGE } from "../../assets/images";
-import { location } from "../utils/constens";
+import { location, phoneNumber } from "../utils/constens";
 import { changeDateFormat } from "../utils/utilsFunctions";
 
 import Database from "../Classes/Database";
-
-const ITEM_SIZE = 100;
 
 const { width, height } = Dimensions.get("screen");
 
@@ -68,6 +67,30 @@ class TrackerScreen extends Component {
     this.db.getCustomerQueueByUid(this.uid, this.onFetchCustomerQueuesComplate);
   };
 
+  handleCallButtonPress = () => {
+    const url = Platform.select({
+      android: `tel://${phoneNumber}`,
+      ios: `telprompt:${phoneNumber}`,
+    });
+    Linking.openURL(url);
+  };
+
+  handleRemoveQueue = (queue) => {
+    this.db.removeQueue(queue.key);
+  };
+
+  handleOpenMapPress = async () => {
+    const destination = encodeURIComponent(`Anees, HaShalom Mall, Shefa-'Amr`);
+    const link = `http://maps.google.com/?daddr=${destination}`;
+
+    try {
+      const supported = await Linking.canOpenURL(link);
+
+      if (supported) Linking.openURL(link);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   render() {
     const { queues, refresh, isDataFetched } = this.state;
 
@@ -138,6 +161,9 @@ class TrackerScreen extends Component {
                   status={item.status}
                   date={changeDateFormat(item.date)}
                   time={item.start_time}
+                  onPhonePress={this.handleCallButtonPress}
+                  onRemoveBtnPress={() => this.handleRemoveQueue(item)}
+                  onLocationPress={this.handleOpenMapPress}
                 />
               </Animated.View>
             );
@@ -164,7 +190,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 10,
     overflow: "hidden",
-    height: ITEM_SIZE,
   },
   emptyListWrapper: {
     //height: height * 0.3,

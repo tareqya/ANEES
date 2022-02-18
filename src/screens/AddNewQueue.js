@@ -252,10 +252,12 @@ class AddNewQueue extends Component {
 
     return (
       <View style={styles.continer}>
-        <Header goBack={() => this.props.navigation.navigate("HomeScreen")} />
+        <Header
+          goBack={() => this.props.navigation.navigate("TrackerTabStack")}
+        />
         {queueAddComplate ? (
           <Verify
-            callBack={() => this.props.navigation.navigate("HomeScreen")}
+            callBack={() => this.props.navigation.navigate("TrackerTabStack")}
           />
         ) : null}
 

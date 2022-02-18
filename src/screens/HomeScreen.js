@@ -8,7 +8,8 @@ import {
   ScrollView,
 } from "react-native";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
-
+import Entypo from "react-native-vector-icons/Entypo";
+import { FAB } from "react-native-paper";
 import { isRTL } from "expo-localization";
 
 import { COLORS } from "../../assets/colors";
@@ -53,7 +54,16 @@ class HomeScreen extends Component {
               </Text>
             </View>
           </View>
-
+          <View style={styles.newsWrapper}>
+            <FAB
+              style={styles.news}
+              small
+              icon={() => <Entypo name="news" color={COLORS.white} size={20} />}
+              label="עדכונים"
+              color={COLORS.white}
+              onPress={() => this.props.navigation.navigate("PostsScreen")}
+            />
+          </View>
           <View style={styles.body}>
             <View style={styles.salonImageWrapper}>
               <Image
@@ -180,8 +190,8 @@ const styles = StyleSheet.create({
   },
 
   locationWrapper: {
-    flexDirection: "row",
-    justifyContent: isRTL ? "flex-start" : "flex-end",
+    flexDirection: isRTL ? "row-reverse" : "row",
+    justifyContent: "flex-end",
     alignItems: "center",
     marginVertical: 5,
   },
@@ -233,6 +243,14 @@ const styles = StyleSheet.create({
   gallerySecondaryImage: {
     height: "100%",
     width: "100%",
+  },
+  newsWrapper: {
+    width: 100,
+    marginBottom: 10,
+    marginHorizontal: 10,
+  },
+  news: {
+    backgroundColor: COLORS.secondary,
   },
 });
 export default HomeScreen;

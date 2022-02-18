@@ -1,6 +1,7 @@
 import { isRTL } from "expo-localization";
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Button } from "react-native-paper";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { COLORS } from "../../assets/colors";
@@ -16,6 +17,7 @@ const QueueComp = ({
   status,
   onLocationPress = () => {},
   onPhonePress = () => {},
+  onRemoveBtnPress = () => {},
   date,
   time,
 }) => {
@@ -62,6 +64,16 @@ const QueueComp = ({
           <TouchableOpacity style={styles.phoneWrapper} onPress={onPhonePress}>
             <Ionicons size={20} color={COLORS.white} name="call-outline" />
           </TouchableOpacity>
+        </View>
+
+        <View style={styles.removeBtnWrapper}>
+          <Button
+            mode="contained"
+            style={{ backgroundColor: COLORS.danger }}
+            onPress={onRemoveBtnPress}
+          >
+            בטול תור
+          </Button>
         </View>
       </View>
     </View>
@@ -136,6 +148,11 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.success,
     padding: 5,
     borderRadius: 20,
+  },
+  removeBtnWrapper: {
+    width: 100,
+    alignSelf: isRTL ? "flex-start" : "flex-end",
+    marginTop: 20,
   },
 });
 

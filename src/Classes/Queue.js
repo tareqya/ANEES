@@ -14,6 +14,7 @@ class Queue {
     service,
     status = WAITING_STATUS
   ) {
+    this.key = "";
     this.customer_id = customer_id;
     this.date = date;
     this.start_time = start_time;
@@ -23,7 +24,7 @@ class Queue {
     this.service = service;
   }
 
-  fill_data = (object) => {
+  fill_data = (object, key = "") => {
     this.customer_id = object.customer_id;
     this.date = object.date;
     this.start_time = object.start_time;
@@ -31,6 +32,7 @@ class Queue {
     this.barber_id = object.barber_id;
     this.status = object.status;
     this.service = object.service;
+    this.key = key;
   };
 
   toDict = () => {

@@ -30,6 +30,7 @@ const HomeTabStack = () => {
       }}
     >
       <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="PostsScreen" component={PostsScreen} />
     </Stack.Navigator>
   );
 };
@@ -42,7 +43,6 @@ const TrackerTabStack = () => {
       }}
     >
       <Stack.Screen name="TrackerScreen" component={TrackerScreen} />
-      <Stack.Screen name="PostsScreen" component={PostsScreen} />
     </Stack.Navigator>
   );
 };

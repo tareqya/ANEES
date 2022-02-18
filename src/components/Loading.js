@@ -1,10 +1,24 @@
 import React from "react";
 import LottieView from "lottie-react-native";
+import { Animated, Easing } from "react-native";
 
-export default class Verify extends React.Component {
+export default class Loading extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      progress: new Animated.Value(0),
+    };
+  }
+
+  componentDidMount() {
+    const animation = Animated.timing(this.state.progress, {
+      toValue: 1,
+      duration: 1000,
+      easing: Easing.linear,
+      useNativeDriver: true,
+    });
+
+    Animated.loop(animation).start();
   }
 
   render() {
@@ -14,8 +28,7 @@ export default class Verify extends React.Component {
           width: "100%",
         }}
         source={require("../../assets/files/loading.json")}
-        autoPlay
-        loop
+        progress={this.state.progress}
       />
     );
   }

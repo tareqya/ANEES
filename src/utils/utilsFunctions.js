@@ -25,7 +25,7 @@ export const getFreeHours = (start_time, end_time, service_time, queues) => {
 
       if (
         (i >= queueStartTimeInMin && i < queueEndTimeInMin) ||
-        (i + service_time >= queueStartTimeInMin &&
+        (i + service_time > queueStartTimeInMin &&
           i + service_time <= queueEndTimeInMin)
       ) {
         taken = true;
@@ -78,4 +78,12 @@ export const isQueuePass = (strDate, strStartTime) => {
   const current_time = d.getHours() + ":" + d.getMinutes();
   const current_date = convertDateToString(d);
   return compareDate(current_date, current_time, strDate, strStartTime) >= 1;
+};
+
+export const CompareDateObjects = (date1, date2) => {
+  return (
+    date1.getDay() == date2.getDay() &&
+    date1.getMonth() == date2.getMonth() &&
+    date1.getFullYear() == date2.getFullYear()
+  );
 };

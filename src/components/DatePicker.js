@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { isRTL } from "expo-localization";
 import { COLORS } from "../../assets/colors";
+import { CompareDateObjects } from "../utils/utilsFunctions";
 
 const DayItem = ({
   dayNum,
@@ -40,6 +41,7 @@ const DayItem = ({
 
 const DatePicker = ({ labels, months, onDaySelect }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+
   const [days, setDays] = useState([
     {
       dayName: labels[0],
@@ -105,6 +107,17 @@ const DatePicker = ({ labels, months, onDaySelect }) => {
       isSelected: false,
     },
   ]);
+
+  useEffect(() => {
+    for (let i = 0; i < days.length; i++) {
+      if (CompareDateObjects(days[i].date, currentDate)) {
+        handleOnDateSelect(i);
+        break;
+      }
+    }
+    setCurrentDate(currentDate);
+    onDaySelect(currentDate);
+  }, []);
 
   const updateDays = (selectedDate) => {
     for (let i = 0; i < days.length; i++) {

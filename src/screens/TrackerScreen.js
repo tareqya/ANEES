@@ -30,8 +30,9 @@ class TrackerScreen extends Component {
       refresh: false,
       isDataFetched: false,
     };
-    this.uid = "1";
+
     this.db = new Database();
+    this.uid = this.db.getCurrentUser().uid;
     this.fadeinAnimations = [];
   }
 

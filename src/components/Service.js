@@ -8,11 +8,15 @@ const Service = ({
   serviceName,
   imageWrapperStyle = {},
   labelStyle = {},
+  imageHeight = 30,
 }) => {
   return (
     <View style={styles.continer}>
       <View style={[styles.serviceImageWrapper, imageWrapperStyle]}>
-        <Image source={imageUrl} style={styles.serviceImage} />
+        <Image
+          source={imageUrl}
+          style={[styles.serviceImage, { height: imageHeight }]}
+        />
       </View>
       <View style={styles.nameWrapper}>
         <Text style={[styles.serviceName, labelStyle]}>{serviceName}</Text>

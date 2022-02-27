@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, createRef } from "react";
 import {
   View,
   Text,
@@ -7,11 +7,27 @@ import {
   Animated,
   Dimensions,
 } from "react-native";
-import { TextInput, FAB } from "react-native-paper";
+import { TextInput, HelperText } from "react-native-paper";
 import Entypo from "react-native-vector-icons/Entypo";
+import {
+  FirebaseRecaptchaVerifierModal,
+  FirebaseRecaptchaBanner,
+} from "expo-firebase-recaptcha";
+import {
+  getAuth,
+  PhoneAuthProvider,
+  signInWithCredential,
+} from "firebase/auth";
+import { getApp } from "firebase/app";
 import { COLORS } from "../../assets/colors";
+import Database from "../Classes/Database";
+import User from "../Classes/User";
 
 const { height } = Dimensions.get("screen");
+
+const app = getApp();
+const auth = getAuth();
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -19,9 +35,12 @@ class Login extends Component {
       firstNameError: false,
       lastNameError: false,
       phoneError: false,
+      codeError: false,
       firstName: "",
       lastName: "",
       phone: "",
+      verificationId: null,
+      code: "",
     };
 
     this.translateYAnimation = new Animated.Value(1000);
@@ -30,6 +49,10 @@ class Login extends Component {
     this.translateYLogoAnimation = new Animated.Value(height / 3);
     this.logoScaleAnimation = new Animated.Value(2);
     this.clickAnimationRef = new Animated.Value(1);
+
+    this.recaptchaVerifier = createRef(null);
+
+    this.db = new Database();
   }
 
   componentDidMount() {
@@ -110,12 +133,62 @@ class Login extends Component {
       lastNameError: lastNameErrorStatus,
       phoneError: phoneErrorStatus,
     });
+
+    return !firstNameErrorStatus && !lastNameErrorStatus && !phoneErrorStatus;
   };
 
   handleNextPress = () => {
+    const { verificationId, code } = this.state;
     this.clickAnimation();
     if (!this.isDataCorrect()) {
       return;
+    }
+
+    if (verificationId == null && code == "") this.handleSendCode();
+    if (code != "" && verificationId != null) {
+      this.handleCodeVerify();
+    }
+  };
+
+  handleSendCode = async () => {
+    try {
+      const { phone } = this.state;
+      var phoneNumber = phone.replace("+972", "");
+      if (phoneNumber.startsWith("0")) {
+        phoneNumber = phoneNumber.slice(1);
+      }
+      const phoneProvider = new PhoneAuthProvider(auth);
+      const verificationId = await phoneProvider.verifyPhoneNumber(
+        `+972${phoneNumber}`,
+        this.recaptchaVerifier.current
+      );
+      this.setState({ verificationId, codeError: false });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  handleCodeVerify = async () => {
+    try {
+      const { verificationId, code, firstName, lastName } = this.state;
+      const credential = PhoneAuthProvider.credential(verificationId, code);
+      await signInWithCredential(auth, credential);
+      const user = new User(
+        getAuth().currentUser.uid,
+        firstName,
+        lastName,
+        getAuth().currentUser.phoneNumber
+      );
+      this.db.getUserInfo(user.uid, (userInfo) => {
+        if (userInfo == null) {
+          this.db.updateUserInfo(user.toDict());
+        } else {
+          user.isAdmin = userInfo.isAdmin;
+          this.db.updateUserInfo(user.toDict());
+        }
+      });
+    } catch (err) {
+      this.setState({ codeError: true });
     }
   };
 
@@ -127,10 +200,18 @@ class Login extends Component {
       firstName,
       lastName,
       phone,
+      code,
+      codeError,
+      verificationId,
     } = this.state;
 
     return (
       <View style={styles.continer}>
+        <FirebaseRecaptchaVerifierModal
+          ref={this.recaptchaVerifier}
+          firebaseConfig={app.options}
+          attemptInvisibleVerification
+        />
         <Animated.View
           style={[
             styles.header,
@@ -198,9 +279,32 @@ class Login extends Component {
                 keyboardType="phone-pad"
                 activeOutlineColor={COLORS.primary}
                 value={phone}
-                onChangeText={(text) => this.setState({ phone: text })}
+                onChangeText={(text) =>
+                  this.setState({ phone: text, code: "", verificationId: null })
+                }
               />
             </KeyboardAvoidingView>
+            {verificationId != null ? (
+              <KeyboardAvoidingView style={styles.codeWrapper}>
+                <TextInput
+                  label="code"
+                  style={styles.code}
+                  mode="outlined"
+                  error={codeError}
+                  activeOutlineColor={COLORS.primary}
+                  value={code}
+                  autoCorrect={false}
+                  autoComplete={false}
+                  keyboardType="phone-pad"
+                  onChangeText={(text) =>
+                    this.setState({ code: text, codeError: false })
+                  }
+                />
+                <HelperText type="error" visible={codeError}>
+                  קוד אימות לא נכון
+                </HelperText>
+              </KeyboardAvoidingView>
+            ) : null}
           </Animated.View>
         </Animated.View>
         <Animated.View
@@ -219,6 +323,7 @@ class Login extends Component {
             color={COLORS.white}
             style={{ alignSelf: "center" }}
             size={30}
+            disable={true}
             onPress={this.handleNextPress}
           />
         </Animated.View>
@@ -267,9 +372,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 25,
     position: "absolute",
-    bottom: height / 6,
+    bottom: height / 20,
     alignSelf: "center",
     backgroundColor: COLORS.secondary,
   },
+  codeWrapper: {
+    justifyContent: "center",
+    marginHorizontal: 100,
+    marginTop: 10,
+  },
+  code: {
+    textAlign: "center",
+  },
 });
+
 export default Login;

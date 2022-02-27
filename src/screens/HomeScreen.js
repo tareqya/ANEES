@@ -23,19 +23,39 @@ import {
   GALLERY_SECONDARY2_IMAGE,
 } from "../../assets/images";
 import { SHAVING, HAIRCUT, location } from "../utils/constens";
-
+import Database from "../Classes/Database";
 import Divider from "../components/Divider";
 import Service from "../components/Service";
+import Loading from "../components/Loading";
 
 const { width, height } = Dimensions.get("screen");
 
 class HomeScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      user: null,
+    };
+
+    this.db = new Database();
+  }
+
+  componentDidMount() {
+    const uid = this.db.getCurrentUser().uid;
+    this.db.getUserInfo(uid, (user) => {
+      this.setState({ user });
+    });
   }
 
   render() {
+    const { user } = this.state;
+    if (user == null) {
+      return (
+        <View style={styles.loadingWrapper}>
+          <Loading />
+        </View>
+      );
+    }
     return (
       <View style={styles.continer}>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -48,7 +68,7 @@ class HomeScreen extends Component {
               />
             </View>
             <View>
-              <Text style={styles.name}>שלום אחמד,</Text>
+              <Text style={styles.name}>שלום {user.first_name},</Text>
               <Text style={styles.welcome}>
                 בואו נהפוך את השיער שלך לאטרקטיבי
               </Text>
@@ -251,6 +271,10 @@ const styles = StyleSheet.create({
   },
   news: {
     backgroundColor: COLORS.secondary,
+  },
+  loadingWrapper: {
+    flex: 1,
+    justifyContent: "center",
   },
 });
 export default HomeScreen;

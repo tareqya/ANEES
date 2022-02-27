@@ -8,18 +8,22 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  Animated,
+  Dimensions,
+  Easing,
+  TouchableWithoutFeedback,
 } from "react-native";
-import { Button } from "react-native-paper";
-
+import { Button, Searchbar } from "react-native-paper";
+import AntDesign from "react-native-vector-icons/AntDesign";
 import { isRTL } from "expo-localization";
 
-import DatePicker from "../components/DatePicker";
-import Service from "../components/Service";
-import TimePicker from "../components/TimePicker";
-import Header from "../components/Header";
-import Verify from "../components/Verify";
-
-import { COLORS } from "../../assets/colors";
+import DatePicker from "../../components/DatePicker";
+import Service from "../../components/Service";
+import TimePicker from "../../components/TimePicker";
+import Header from "../../components/Header";
+import Verify from "../../components/Verify";
+import UserComp from "../../components/UserComp";
+import { COLORS } from "../../../assets/colors";
 
 import {
   convertDateToString,
@@ -27,7 +31,7 @@ import {
   getFreeHours,
   convertMinsToHrsMins,
   convertStringHourToMin,
-} from "../utils/utilsFunctions";
+} from "../../utils/utilsFunctions";
 import {
   WAITING_STATUS,
   MONTHS,
@@ -35,13 +39,15 @@ import {
   OPEN_TIME,
   CLOSE_TIME,
   SERVICES,
-} from "../utils/constens";
+} from "../../utils/constens";
 
-import Database from "../Classes/Database";
-import Queue from "../Classes/Queue";
-import Message from "../components/Message";
+import Database from "../../Classes/Database";
+import Queue from "../../Classes/Queue";
+import Message from "../../components/Message";
 
-class AddNewQueue extends Component {
+const { width, height } = Dimensions.get("screen");
+
+class AddNewQueueAdmin extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -55,10 +61,15 @@ class AddNewQueue extends Component {
       queueAddComplate: false,
       disable: false,
       error: "",
+      selectCustomer: false,
+      customerSearch: "",
+      customers: [],
+      allCustomers: [],
     };
 
     this.db = new Database();
     this.uid = this.db.getCurrentUser().uid;
+    this.selectCustomerAnimation = new Animated.Value(0);
   }
 
   componentDidMount() {
@@ -200,6 +211,26 @@ class AddNewQueue extends Component {
     );
   };
 
+  onChangeSearch = (value) => {
+    this.setState({ customerSearch: value });
+  };
+
+  handleSelectCustomerPress = () => {
+    this.setState({ selectCustomer: true });
+
+    this.db.getCustomers((customers) => {
+      this.setState({ customers, allCustomers: customers });
+    });
+
+    this.selectCustomerAnimation = new Animated.Value(0);
+    Animated.timing(this.selectCustomerAnimation, {
+      duration: 1000,
+      useNativeDriver: true,
+      toValue: 1,
+      easing: Easing.bounce,
+    }).start();
+  };
+
   render() {
     const {
       selectedBarber,
@@ -212,16 +243,17 @@ class AddNewQueue extends Component {
       queueAddComplate,
       disable,
       error,
+      selectCustomer,
+      customerSearch,
+      customers,
     } = this.state;
 
     return (
       <View style={styles.continer}>
-        <Header
-          goBack={() => this.props.navigation.navigate("TrackerTabStack")}
-        />
+        <Header goBack={() => this.props.navigation.navigate("HomeTabStack")} />
         {queueAddComplate ? (
           <Verify
-            callBack={() => this.props.navigation.navigate("TrackerTabStack")}
+            callBack={() => this.props.navigation.navigate("HomeTabStack")}
           />
         ) : null}
 
@@ -344,6 +376,17 @@ class AddNewQueue extends Component {
             </View>
           ) : null}
 
+          <View>
+            {/* select customer */}
+            <Button
+              mode="contained"
+              onPress={() => this.handleSelectCustomerPress()}
+              style={[styles.addCustomerBtn]}
+              labelStyle={styles.addQueueBtnLabel}
+            >
+              בחר לקוח
+            </Button>
+          </View>
           <View style={styles.addQueueBtnWrapper}>
             {/* Add queue */}
             <Button
@@ -372,6 +415,68 @@ class AddNewQueue extends Component {
             ) : null}
           </View>
         </ScrollView>
+
+        {selectCustomer ? (
+          <View style={styles.selectCustomerContiner}>
+            <Animated.View
+              style={[
+                styles.selectCustomerBody,
+                { transform: [{ scale: this.selectCustomerAnimation }] },
+              ]}
+            >
+              <TouchableOpacity
+                style={{ width: 40, height: 40 }}
+                onPress={() => {
+                  this.setState({ selectCustomer: false });
+                }}
+              >
+                <AntDesign
+                  name="close"
+                  color={COLORS.lightText}
+                  size={25}
+                  style={{ marginBottom: 10 }}
+                />
+              </TouchableOpacity>
+
+              <Searchbar
+                placeholder="חפש לקוח"
+                onChangeText={this.onChangeSearch}
+                value={customerSearch}
+              />
+
+              <TouchableOpacity
+                onPress={() => {
+                  this.props.navigation.navigate("AddNewCustomer");
+                }}
+                style={styles.insertNewCustomerButton}
+              >
+                <Text style={styles.insertNewCustomerText}>
+                  הוספת לקוח חדש ?
+                </Text>
+              </TouchableOpacity>
+
+              <View style={styles.customersWrapper}>
+                <FlatList
+                  showsVerticalScrollIndicator={false}
+                  ListEmptyComponent={
+                    <Message
+                      msg="לא נמצא לקוחות במערכת"
+                      alertType={"warning"}
+                      textColor={COLORS.white}
+                    />
+                  }
+                  data={customers}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={({ item, index }) => (
+                    <TouchableOpacity style={styles.customerWrapper}>
+                      <UserComp user={item} />
+                    </TouchableOpacity>
+                  )}
+                />
+              </View>
+            </Animated.View>
+          </View>
+        ) : null}
       </View>
     );
   }
@@ -425,5 +530,41 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
+  addCustomerBtn: {
+    width: 150,
+    backgroundColor: COLORS.primary,
+    alignSelf: isRTL ? "flex-start" : "flex-end",
+    margin: 10,
+  },
+  selectCustomerContiner: {
+    flex: 1,
+    position: "absolute",
+    height,
+    width,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "transparent",
+  },
+  selectCustomerBody: {
+    width: "90%",
+    height: "50%",
+    backgroundColor: COLORS.white,
+    borderRadius: 10,
+    padding: 10,
+  },
+  insertNewCustomerButton: {
+    marginTop: 10,
+    alignSelf: isRTL ? "flex-start" : "flex-end",
+  },
+  insertNewCustomerText: {
+    color: "blue",
+  },
+  customerWrapper: {
+    marginVertical: 5,
+  },
+  customersWrapper: {
+    flex: 1,
+    marginTop: 10,
+  },
 });
-export default AddNewQueue;
+export default AddNewQueueAdmin;

@@ -39,7 +39,12 @@ const DayItem = ({
   );
 };
 
-const DatePicker = ({ labels, months, onDaySelect }) => {
+const DatePicker = ({
+  labels,
+  months,
+  onDaySelect,
+  selectCurrentDate = false,
+}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const [days, setDays] = useState([
@@ -109,14 +114,16 @@ const DatePicker = ({ labels, months, onDaySelect }) => {
   ]);
 
   useEffect(() => {
-    for (let i = 0; i < days.length; i++) {
-      if (CompareDateObjects(days[i].date, currentDate)) {
-        handleOnDateSelect(i);
-        break;
+    if (selectCurrentDate) {
+      for (let i = 0; i < days.length; i++) {
+        if (CompareDateObjects(days[i].date, currentDate)) {
+          handleOnDateSelect(i);
+          break;
+        }
       }
+      setCurrentDate(currentDate);
+      onDaySelect(currentDate);
     }
-    setCurrentDate(currentDate);
-    onDaySelect(currentDate);
   }, []);
 
   const updateDays = (selectedDate) => {

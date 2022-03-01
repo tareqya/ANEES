@@ -11,7 +11,6 @@ import {
   Animated,
   Dimensions,
   Easing,
-  TouchableWithoutFeedback,
 } from "react-native";
 import { Button, Searchbar } from "react-native-paper";
 import AntDesign from "react-native-vector-icons/AntDesign";
@@ -63,13 +62,16 @@ class AddNewQueueAdmin extends Component {
       error: "",
       selectCustomer: false,
       customerSearch: "",
+      selectedCustomer: undefined,
       customers: [],
       allCustomers: [],
+      refreshCustomers: false,
     };
 
     this.db = new Database();
     this.uid = this.db.getCurrentUser().uid;
     this.selectCustomerAnimation = new Animated.Value(0);
+    this.selectedService = {};
   }
 
   componentDidMount() {
@@ -94,14 +96,12 @@ class AddNewQueueAdmin extends Component {
       });
       return;
     }
-    const { selectedService } = this.state;
     const freeHours = getFreeHours(
       OPEN_TIME,
       CLOSE_TIME,
-      selectedService.time,
+      this.selectedService.time,
       queues
     );
-
     this.setState({
       availableHours: freeHours,
       calcFreeHours: false,
@@ -110,7 +110,7 @@ class AddNewQueueAdmin extends Component {
   };
 
   handleAddQueue = () => {
-    const { selectedBarber, selectedDate, selectedService, selectedTime } =
+    const { selectedBarber, selectedDate, selectedTime, selectedCustomer } =
       this.state;
 
     const currentDate = new Date();
@@ -128,15 +128,16 @@ class AddNewQueueAdmin extends Component {
     }
 
     const end_time = convertMinsToHrsMins(
-      convertStringHourToMin(selectedTime) + selectedService.time
+      convertStringHourToMin(selectedTime) + this.selectedService.time
     );
+
     const queue = new Queue(
-      this.uid,
+      selectedCustomer.uid,
       convertDateToString(selectedDate),
       selectedTime,
       end_time,
       selectedBarber.id,
-      selectedService.name,
+      this.selectedService.name,
       WAITING_STATUS
     );
 
@@ -164,14 +165,15 @@ class AddNewQueueAdmin extends Component {
   };
 
   handleChooseDate = (date) => {
-    const { selectedBarber, selectedService } = this.state;
-    if (selectedBarber != null && selectedService.time != undefined) {
+    const { selectedBarber } = this.state;
+    if (selectedBarber != null && this.selectedService.time != undefined) {
       this.setState({
         calcFreeHours: true,
         availableHours: [],
         noHoursAvailable: false,
         error: "",
       });
+
       this.db.getBarberQueuesByDate(
         convertDateToString(date),
         selectedBarber.id,
@@ -191,36 +193,63 @@ class AddNewQueueAdmin extends Component {
         noHoursAvailable: false,
         error: "",
       });
+
+      this.selectedService = service;
+      this.setState({ selectedService: service });
       this.db.getBarberQueuesByDate(
         convertDateToString(selectedDate),
         selectedBarber.id,
         this.fetchBarberQueuesComplate
       );
     }
-    this.setState({ selectedService: service });
   };
 
   isDisable = () => {
-    const { selectedBarber, selectedDate, selectedService, selectedTime } =
+    const { selectedBarber, selectedDate, selectedTime, selectedCustomer } =
       this.state;
+
     return (
       selectedBarber == null ||
       selectedDate == null ||
       selectedTime == null ||
-      selectedService.name == undefined
+      this.selectedService.name == undefined ||
+      selectedCustomer == undefined
     );
   };
 
   onChangeSearch = (value) => {
-    this.setState({ customerSearch: value });
+    const { allCustomers } = this.state;
+    const filter = [];
+
+    if (value != "") {
+      for (let i = 0; i < allCustomers.length; i++) {
+        if (
+          allCustomers[i].first_name.includes(value) ||
+          allCustomers[i].last_name.includes(value) ||
+          allCustomers[i].phone.replace("+972", "0").includes(value)
+        ) {
+          filter.push(allCustomers[i]);
+        }
+      }
+      this.setState({ customerSearch: value, customers: filter });
+    } else {
+      this.setState({ customerSearch: value, customers: allCustomers });
+    }
+  };
+
+  handleGetAllCustomer = () => {
+    this.db.getCustomers((customers) => {
+      this.setState({
+        customers,
+        allCustomers: customers,
+        refreshCustomers: false,
+      });
+    });
   };
 
   handleSelectCustomerPress = () => {
     this.setState({ selectCustomer: true });
-
-    this.db.getCustomers((customers) => {
-      this.setState({ customers, allCustomers: customers });
-    });
+    this.handleGetAllCustomer();
 
     this.selectCustomerAnimation = new Animated.Value(0);
     Animated.timing(this.selectCustomerAnimation, {
@@ -229,6 +258,10 @@ class AddNewQueueAdmin extends Component {
       toValue: 1,
       easing: Easing.bounce,
     }).start();
+  };
+
+  handleChooseCustomer = (customer) => {
+    this.setState({ selectedCustomer: customer });
   };
 
   render() {
@@ -246,6 +279,8 @@ class AddNewQueueAdmin extends Component {
       selectCustomer,
       customerSearch,
       customers,
+      selectedCustomer,
+      refreshCustomers,
     } = this.state;
 
     return (
@@ -457,6 +492,8 @@ class AddNewQueueAdmin extends Component {
 
               <View style={styles.customersWrapper}>
                 <FlatList
+                  refreshing={refreshCustomers}
+                  onRefresh={() => this.handleGetAllCustomer()}
                   showsVerticalScrollIndicator={false}
                   ListEmptyComponent={
                     <Message
@@ -468,11 +505,37 @@ class AddNewQueueAdmin extends Component {
                   data={customers}
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={({ item, index }) => (
-                    <TouchableOpacity style={styles.customerWrapper}>
-                      <UserComp user={item} />
+                    <TouchableOpacity
+                      style={styles.customerWrapper}
+                      onPress={() => this.handleChooseCustomer(item)}
+                    >
+                      <UserComp
+                        user={item}
+                        continerStyle={{
+                          borderColor:
+                            item.uid == selectedCustomer?.uid
+                              ? COLORS.secondary
+                              : COLORS.background,
+                          borderWidth:
+                            item.uid == selectedCustomer?.uid ? 2 : 0,
+                        }}
+                      />
                     </TouchableOpacity>
                   )}
                 />
+                <Button
+                  mode="contained"
+                  onPress={() => this.setState({ selectCustomer: false })}
+                  style={{
+                    alignSelf: "center",
+                    width: 150,
+                    backgroundColor: COLORS.primary,
+                    marginTop: 20,
+                  }}
+                  labelStyle={{ color: COLORS.white }}
+                >
+                  בחר
+                </Button>
               </View>
             </Animated.View>
           </View>

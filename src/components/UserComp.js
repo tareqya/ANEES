@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import { COLORS } from "../../assets/colors";
 import { PROFILE_IMAGE } from "../../assets/images";
 
-const UserComp = ({ user }) => {
+const UserComp = ({ user, continerStyle = {} }) => {
   return (
-    <View style={styles.continer}>
+    <View style={[styles.continer, continerStyle]}>
       <View style={styles.imageWrapper}>
         <Image source={PROFILE_IMAGE} style={styles.image} />
       </View>
@@ -13,7 +13,7 @@ const UserComp = ({ user }) => {
         <Text style={styles.name}>
           {user.first_name} {user.last_name}
         </Text>
-        <Text style={styles.phone}> {user.phone}</Text>
+        <Text style={styles.phone}> {user.phone.replace("+972", "0")}</Text>
       </View>
     </View>
   );

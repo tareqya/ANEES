@@ -153,7 +153,7 @@ class Login extends Component {
   handleSendCode = async () => {
     try {
       const { phone } = this.state;
-      var phoneNumber = phone.replace("+972", "");
+      var phoneNumber = phone.replace("+972", "").replace("-", "");
       if (phoneNumber.startsWith("0")) {
         phoneNumber = phoneNumber.slice(1);
       }

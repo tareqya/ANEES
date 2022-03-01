@@ -153,6 +153,7 @@ class HomeScreen extends Component {
               onDaySelect={(date) => this.handleChooseDate(date)}
               labels={["א", "ב", "ג", "ד", "ה", "ו", "ש"]}
               months={MONTHS}
+              selectCurrentDate={true}
             />
           </View>
 

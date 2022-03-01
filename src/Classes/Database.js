@@ -267,6 +267,9 @@ class Database {
           for (let key in snapshot.val()) {
             const user = new User();
             user.fill_data(snapshot.val()[key]);
+            if (user.uid == "" || user.uid == undefined) {
+              user.uid = key;
+            }
             customers.push(user);
           }
 
@@ -288,6 +291,34 @@ class Database {
       callBack(true);
     } catch (err) {
       callBack(false);
+    }
+  };
+
+  getCustomerByPhone = (phone, callBack = () => {}) => {
+    try {
+      const reference = child(ref(this.db), `Users`);
+      const queuesRef = query(reference, orderByChild("phone"), equalTo(phone));
+      onValue(
+        queuesRef,
+        (snapshot) => {
+          if (snapshot.val() == null) {
+            callBack(null);
+            return;
+          }
+
+          for (let key in snapshot.val()) {
+            const user = new User();
+            user.fill_data(snapshot.val()[key]);
+            callBack(user);
+            break;
+          }
+        },
+        {
+          onlyOnce: true,
+        }
+      );
+    } catch (err) {
+      callBack(null);
     }
   };
 }

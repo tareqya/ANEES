@@ -13,6 +13,7 @@ import { TextInput, HelperText, Button } from "react-native-paper";
 import { COLORS } from "../../../assets/colors";
 import Header from "../../components/Header";
 import Message from "../../components/Message";
+import Verify from "../../components/Verify";
 import Database from "../../Classes/Database";
 import User from "../../Classes/User";
 
@@ -28,6 +29,7 @@ class AddNewCustomer extends Component {
       phoneError: false,
       loading: false,
       error: "",
+      success: false,
     };
 
     this.initAnimation = new Animated.Value(0);
@@ -42,6 +44,27 @@ class AddNewCustomer extends Component {
       duration: 1000,
     }).start();
   }
+  handleGetCustomerComplate = (user) => {
+    if (user == null) {
+      const { phone, lastName, firstName } = this.state;
+      const phoneNumber = `+972${phone.replace("+972", "0").slice(1)}`.replace(
+        "-",
+        ""
+      );
+      const customer = new User("", firstName, lastName, phoneNumber);
+
+      this.db.addNewCustomer(customer.toDict(), (status) => {
+        this.setState({ loading: false });
+        if (!status) {
+          this.setState({ error: "הוספה נכשלה" });
+        } else {
+          this.setState({ success: true });
+        }
+      });
+    } else {
+      this.setState({ error: "המספר הזה כבר קיים", loading: false });
+    }
+  };
 
   handleAddCustomer = () => {
     this.setState({
@@ -49,6 +72,7 @@ class AddNewCustomer extends Component {
       lastNameError: false,
       firstNameError: false,
       phoneError: false,
+      success: false,
     });
     const { lastName, firstName, phone } = this.state;
     if (firstName.trim() == "") {
@@ -59,21 +83,19 @@ class AddNewCustomer extends Component {
       this.setState({ lastNameError: true, loading: false });
       return;
     }
-    if (phone.trim() == "") {
+    if (
+      phone.trim() == "" ||
+      phone.trim().length < 10 ||
+      !phone.match(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/)
+    ) {
       this.setState({ phoneError: true, loading: false });
       return;
     }
-    const phoneNumber = `+972${phone.slice(1)}`;
-
-    const customer = new User("", firstName, lastName, phoneNumber);
-    this.db.addNewCustomer(customer.toDict(), (status) => {
-      this.setState({ loading: false });
-      if (!status) {
-        this.setState({ error: "הוספה נכשלה" });
-      } else {
-        this.props.navigation.goBack();
-      }
-    });
+    const phoneNumber = `+972${phone.replace("+972", "0").slice(1)}`.replace(
+      "-",
+      ""
+    );
+    this.db.getCustomerByPhone(phoneNumber, this.handleGetCustomerComplate);
   };
 
   render() {
@@ -86,6 +108,7 @@ class AddNewCustomer extends Component {
       phone,
       loading,
       error,
+      success,
     } = this.state;
     return (
       <View style={styles.continer}>
@@ -155,6 +178,9 @@ class AddNewCustomer extends Component {
         </Animated.View>
         {error != "" ? (
           <Message alertType={"danger"} textColor={COLORS.white} msg={error} />
+        ) : null}
+        {success ? (
+          <Verify callBack={() => this.props.navigation.goBack()} />
         ) : null}
       </View>
     );

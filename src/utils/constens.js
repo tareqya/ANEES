@@ -1,10 +1,4 @@
-import {
-  BARBER1,
-  BARBER2,
-  BARBER3,
-  SCISSOR_IMAGE,
-  RAZOR_IMAGE,
-} from "../../assets/images";
+import { SCISSOR_IMAGE, RAZOR_IMAGE } from "../../assets/images";
 export const SHAVING = "גילוח";
 export const HAIRCUT = "תספורת";
 export const WAITING_STATUS = "ממתין";
@@ -25,12 +19,6 @@ export const MONTHS = [
   "אוקטובר",
   "נובמבר",
   "דצמבר",
-];
-
-export const BARBERS = [
-  { id: "1", name: "Alex Carbali", image: BARBER1 },
-  { id: "2", name: "Kimberly Tan", image: BARBER2 },
-  { id: "3", name: "James Rodri", image: BARBER3 },
 ];
 
 export const OPEN_TIME = "9:00";

@@ -15,8 +15,9 @@ import Message from "../components/Message";
 import Loading from "../components/Loading";
 import { COLORS } from "../../assets/colors";
 import { BOOKING_IMAGE, ERROR_IMAGE } from "../../assets/images";
-import { location, phoneNumber } from "../utils/constens";
+import { location, phoneNumber, REJECT_STATUS } from "../utils/constens";
 import { changeDateFormat } from "../utils/utilsFunctions";
+import { removeScheduledNotification } from "../utils/notifactions";
 
 import Database from "../Classes/Database";
 
@@ -58,6 +59,16 @@ class TrackerScreen extends Component {
 
   onFetchCustomerQueuesComplate = (queues) => {
     if (queues != null) {
+      for (let i = 0; i < queues.length; i++) {
+        if (queues[i].status == REJECT_STATUS) {
+          if (
+            queues[i].notification_id != undefined &&
+            queues[i].notification_id != ""
+          ) {
+            removeScheduledNotification(queues[i].notification_id);
+          }
+        }
+      }
       this.startFadeInAnimation(queues.length);
     }
     this.setState({ queues, refresh: false, isDataFetched: true });
@@ -77,6 +88,9 @@ class TrackerScreen extends Component {
   };
 
   handleRemoveQueue = (queue) => {
+    if (queue.notification_id != undefined && queue.notification_id != "") {
+      removeScheduledNotification(queue.notification_id);
+    }
     this.db.removeQueue(queue.key);
   };
 
@@ -92,6 +106,7 @@ class TrackerScreen extends Component {
       console.log(error);
     }
   };
+
   render() {
     const { queues, refresh, isDataFetched } = this.state;
 

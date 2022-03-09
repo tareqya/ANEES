@@ -6,6 +6,7 @@ class User {
     this.phone = phone;
     this.isAdmin = false;
     this.token = "";
+    this.image = undefined;
   }
 
   fill_data = (object) => {
@@ -15,6 +16,7 @@ class User {
     this.phone = object.phone;
     this.isAdmin = object.isAdmin;
     this.token = object.token;
+    this.image = object.image;
   };
 
   toDict = () => {

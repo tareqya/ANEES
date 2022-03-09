@@ -35,7 +35,7 @@ const OPTIONS = [
   {
     name: "manager",
     title: "מנהל",
-    isAdminOption: false,
+    isAdminOption: true,
     icon: <EvilIcons name="calendar" color={COLORS.primary} size={20} />,
   },
   {

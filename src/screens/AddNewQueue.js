@@ -18,6 +18,7 @@ import Service from "../components/Service";
 import TimePicker from "../components/TimePicker";
 import Header from "../components/Header";
 import Verify from "../components/Verify";
+import Loading from "../components/Loading";
 
 import { COLORS } from "../../assets/colors";
 import { triggerNotification } from "../utils/notifactions";
@@ -33,11 +34,11 @@ import {
 import {
   WAITING_STATUS,
   MONTHS,
-  BARBERS,
   OPEN_TIME,
   CLOSE_TIME,
   SERVICES,
 } from "../utils/constens";
+import { PROFILE_IMAGE } from "../../assets/images";
 
 import Database from "../Classes/Database";
 import Queue from "../Classes/Queue";
@@ -57,6 +58,7 @@ class AddNewQueue extends Component {
       queueAddComplate: false,
       disable: false,
       error: "",
+      barbers: [],
     };
 
     this.db = new Database();
@@ -68,7 +70,30 @@ class AddNewQueue extends Component {
       headerShown: false,
       tabBarStyle: { display: "none" },
     });
+
+    this.db.getBarbers(this.onBarbersFetchComplate);
   }
+
+  onBarbersFetchComplate = async (barbers) => {
+    const barbers_arr = [];
+
+    for (let i = 0; i < barbers.length; i++) {
+      var url = null;
+      if (barbers[i].image != undefined) {
+        url = await this.db.donwloadImage(`barbersImages/${barbers[i].image}`);
+      }
+      const full_name = barbers[i].first_name + " " + barbers[i].last_name;
+      barbers_arr.push({
+        id: barbers[i].uid,
+        token: barbers[i].token,
+        name: full_name,
+        image: PROFILE_IMAGE,
+        uri: url,
+      });
+    }
+
+    this.setState({ barbers: barbers_arr });
+  };
 
   componentWillUnmount() {
     this.props.navigation.setOptions({
@@ -233,8 +258,15 @@ class AddNewQueue extends Component {
       queueAddComplate,
       disable,
       error,
+      barbers,
     } = this.state;
-
+    if (barbers.length == 0) {
+      return (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <Loading />
+        </View>
+      );
+    }
     return (
       <View style={styles.continer}>
         <Header
@@ -252,7 +284,7 @@ class AddNewQueue extends Component {
             <Text style={styles.title}>בחר ספר</Text>
             <FlatList
               horizontal
-              data={BARBERS}
+              data={barbers}
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => item.id}
               renderItem={({ item, index }) => {
@@ -261,25 +293,48 @@ class AddNewQueue extends Component {
                     style={styles.barberListItemWrapper}
                     onPress={() => this.handleChoosenBarber(item)}
                   >
-                    <Image
-                      source={item.image}
-                      resizeMode="stretch"
-                      style={[
-                        styles.barberImage,
-                        {
-                          borderWidth:
-                            selectedBarber != null &&
-                            selectedBarber.id == item.id
-                              ? 2
-                              : 0,
-                          borderColor:
-                            selectedBarber != null &&
-                            selectedBarber.id == item.id
-                              ? COLORS.secondary
-                              : COLORS.white,
-                        },
-                      ]}
-                    />
+                    {item.uri == null ? (
+                      <Image
+                        source={item.image}
+                        resizeMode="stretch"
+                        style={[
+                          styles.barberImage,
+                          {
+                            borderWidth:
+                              selectedBarber != null &&
+                              selectedBarber.id == item.id
+                                ? 2
+                                : 0,
+                            borderColor:
+                              selectedBarber != null &&
+                              selectedBarber.id == item.id
+                                ? COLORS.secondary
+                                : COLORS.white,
+                          },
+                        ]}
+                      />
+                    ) : (
+                      <Image
+                        source={{ uri: item.uri }}
+                        resizeMode="stretch"
+                        style={[
+                          styles.barberImage,
+                          {
+                            borderWidth:
+                              selectedBarber != null &&
+                              selectedBarber.id == item.id
+                                ? 2
+                                : 0,
+                            borderColor:
+                              selectedBarber != null &&
+                              selectedBarber.id == item.id
+                                ? COLORS.secondary
+                                : COLORS.white,
+                          },
+                        ]}
+                      />
+                    )}
+
                     <Text
                       style={[
                         styles.barberText,

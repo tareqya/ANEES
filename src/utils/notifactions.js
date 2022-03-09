@@ -65,3 +65,12 @@ export const sendNotification = async (expoPushToken, title, body) => {
     body: JSON.stringify(message),
   });
 };
+
+export const removeScheduledNotification = async (notification_id) => {
+  try {
+    await Notifications.cancelScheduledNotificationAsync(notification_id);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};

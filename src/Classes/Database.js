@@ -12,6 +12,7 @@ import {
   get,
   update,
 } from "firebase/database";
+import * as StorageDB from "firebase/storage";
 import { getAuth } from "firebase/auth";
 import {
   APPROVE_STATUS,
@@ -354,6 +355,17 @@ class Database {
       );
     } catch (err) {
       callBack(null);
+    }
+  };
+
+  donwloadImage = async (imageName) => {
+    try {
+      const storage = StorageDB.getStorage();
+      const storageRef = StorageDB.ref(storage, imageName);
+      const url = await StorageDB.getDownloadURL(storageRef);
+      return url;
+    } catch (err) {
+      return null;
     }
   };
 }

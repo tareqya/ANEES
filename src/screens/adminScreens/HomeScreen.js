@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, createRef } from "react";
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Linking,
   Alert,
 } from "react-native";
+import * as Notifications from "expo-notifications";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import DatePicker from "../../components/DatePicker";
@@ -29,6 +30,7 @@ import {
 } from "../../utils/utilsFunctions";
 import { COLORS } from "../../../assets/colors";
 import { isRTL } from "expo-localization";
+import { getNotificationToken } from "../../utils/notifactions";
 
 const EMPTY_QUEUE_SIZE = 70;
 
@@ -41,11 +43,38 @@ class HomeScreen extends Component {
       loading: false,
       refreshing: false,
     };
-    this.barberId = "2";
+    this.notificationListener = createRef();
+    this.responseListener = createRef();
     this.db = new Database();
+    this.barberId = this.db.getCurrentUser().uid;
+  }
+
+  componentWillUnmount() {
+    this.notificationListener.current &&
+      Notifications.removeNotificationSubscription(
+        this.notificationListener.current
+      );
+    this.responseListener.current &&
+      Notifications.removeNotificationSubscription(
+        this.responseListener.current
+      );
   }
 
   componentDidMount() {
+    const uid = this.db.getCurrentUser().uid;
+    this.db.getUserInfo(uid, async (user) => {
+      const token = await getNotificationToken();
+      user.token = token;
+      this.db.updateUserInfo(user.toDict());
+      this.setState({ user });
+    });
+
+    this.notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {});
+
+    this.responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {});
+
     this.setState({ dayQueues: this.initDayQueue() });
   }
 

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "anees",
-    "slug": "anees",
+    "name": "ANEES",
+    "slug": "ANEES",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
@@ -15,13 +15,18 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "bundleIdentifier": "com.anees",
+      "buildNumber": "1.0.0",
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "versionCode": 1,
+      "permissions": [],
+      "package": "com.anees"
     },
     "web": {
       "favicon": "./assets/logo.png"

@@ -5,6 +5,7 @@ class User {
     this.last_name = last_name;
     this.phone = phone;
     this.isAdmin = false;
+    this.token = "";
   }
 
   fill_data = (object) => {
@@ -13,6 +14,7 @@ class User {
     this.uid = object.uid;
     this.phone = object.phone;
     this.isAdmin = object.isAdmin;
+    this.token = object.token;
   };
 
   toDict = () => {
@@ -22,6 +24,7 @@ class User {
       uid: this.uid,
       phone: this.phone,
       isAdmin: this.isAdmin,
+      token: this.token,
     };
   };
 }

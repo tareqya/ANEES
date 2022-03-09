@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, createRef } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
+import * as Notifications from "expo-notifications";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Entypo from "react-native-vector-icons/Entypo";
 import { FAB } from "react-native-paper";
@@ -27,8 +28,17 @@ import Database from "../Classes/Database";
 import Divider from "../components/Divider";
 import Service from "../components/Service";
 import Loading from "../components/Loading";
+import { getNotificationToken } from "../utils/notifactions";
 
 const { width, height } = Dimensions.get("screen");
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 class HomeScreen extends Component {
   constructor(props) {
@@ -36,15 +46,36 @@ class HomeScreen extends Component {
     this.state = {
       user: null,
     };
-
+    this.notificationListener = createRef();
+    this.responseListener = createRef();
     this.db = new Database();
   }
 
   componentDidMount() {
     const uid = this.db.getCurrentUser().uid;
-    this.db.getUserInfo(uid, (user) => {
+    this.db.getUserInfo(uid, async (user) => {
+      const token = await getNotificationToken();
+      user.token = token;
+      this.db.updateUserInfo(user.toDict());
       this.setState({ user });
     });
+
+    this.notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {});
+
+    this.responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {});
+  }
+
+  componentWillUnmount() {
+    this.notificationListener.current &&
+      Notifications.removeNotificationSubscription(
+        this.notificationListener.current
+      );
+    this.responseListener.current &&
+      Notifications.removeNotificationSubscription(
+        this.responseListener.current
+      );
   }
 
   render() {

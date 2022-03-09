@@ -22,6 +22,7 @@ class Queue {
     this.barber_id = barber_id;
     this.status = status;
     this.service = service;
+    this.notification_id = "";
   }
 
   fill_data = (object, key = "") => {
@@ -33,6 +34,7 @@ class Queue {
     this.status = object.status;
     this.service = object.service;
     this.key = key;
+    this.notification_id = object.notification_id;
   };
 
   toDict = () => {
@@ -44,6 +46,7 @@ class Queue {
       barber_id: this.barber_id,
       status: this.status,
       service: this.service,
+      notification_id: this.notification_id,
     };
   };
 }

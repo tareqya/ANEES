@@ -87,3 +87,10 @@ export const CompareDateObjects = (date1, date2) => {
     date1.getFullYear() == date2.getFullYear()
   );
 };
+
+export const calcTimeBetweenDatesInSeconds = (date1, date2) => {
+  const time1Mil = date1.getTime();
+  const time2Mil = date2.getTime();
+
+  return Math.floor(Math.abs(time1Mil - time2Mil) / 1000); // rem time in seconds
+};

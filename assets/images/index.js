@@ -11,3 +11,5 @@ export const ERROR_IMAGE = require("./error.png");
 export const BARBER1 = require("./barber1.jpg");
 export const BARBER2 = require("./barber2.jpg");
 export const BARBER3 = require("./barber3.jpg");
+
+export const COMMING_SOON = require("./comming_soon.png");

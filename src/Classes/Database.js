@@ -4,7 +4,6 @@ import {
   ref,
   onValue,
   push,
-  set,
   equalTo,
   query,
   child,
@@ -312,6 +311,42 @@ class Database {
             callBack(user);
             break;
           }
+        },
+        {
+          onlyOnce: true,
+        }
+      );
+    } catch (err) {
+      callBack(null);
+    }
+  };
+
+  getBarbers = (callBack = (barbers) => {}) => {
+    try {
+      const reference = child(ref(this.db), `Users`);
+      const queuesRef = query(
+        reference,
+        orderByChild("isAdmin"),
+        equalTo(true)
+      );
+      onValue(
+        queuesRef,
+        (snapshot) => {
+          const barbers = [];
+          if (snapshot.val() == null) {
+            callBack(barbers);
+            return;
+          }
+          for (let key in snapshot.val()) {
+            const user = new User();
+            user.fill_data(snapshot.val()[key]);
+            if (user.uid == "" || user.uid == undefined) {
+              user.uid = key;
+            }
+            barbers.push(user);
+          }
+
+          callBack(barbers);
         },
         {
           onlyOnce: true,

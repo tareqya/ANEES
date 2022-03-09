@@ -20,6 +20,7 @@ import Header from "../components/Header";
 import Verify from "../components/Verify";
 
 import { COLORS } from "../../assets/colors";
+import { triggerNotification } from "../utils/notifactions";
 
 import {
   convertDateToString,
@@ -27,6 +28,7 @@ import {
   getFreeHours,
   convertMinsToHrsMins,
   convertStringHourToMin,
+  calcTimeBetweenDatesInSeconds,
 } from "../utils/utilsFunctions";
 import {
   WAITING_STATUS,
@@ -98,7 +100,8 @@ class AddNewQueue extends Component {
     });
   };
 
-  handleAddQueue = () => {
+  handleAddQueue = async () => {
+    this.setState({ disable: true });
     const { selectedBarber, selectedDate, selectedService, selectedTime } =
       this.state;
 
@@ -112,7 +115,7 @@ class AddNewQueue extends Component {
         currentTime
       ) <= 0
     ) {
-      this.setState({ error: "לא ניתן לקבוע תור בתאריך ישן" });
+      this.setState({ error: "לא ניתן לקבוע תור בתאריך ישן", disable: false });
       return;
     }
 
@@ -129,7 +132,25 @@ class AddNewQueue extends Component {
       WAITING_STATUS
     );
 
+    const title = "ANEES";
+    const body = "תזכורת יש לך תור אחרי חצי שעה";
+    const date = new Date();
+    date.setFullYear(selectedDate.getFullYear());
+    date.setDate(selectedDate.getDate());
+    date.setMonth(selectedDate.getMonth());
+    const [hours, minutes] = selectedTime.split(":");
+    date.setHours(hours);
+    date.setMinutes(minutes);
+
+    // remember before 30 min
+    date.setMinutes(date.getMinutes() - 30);
+    const seconds = calcTimeBetweenDatesInSeconds(currentDate, date);
+    const notification_id = await triggerNotification(title, body, seconds);
+
+    queue.notification_id = notification_id;
     this.db.addNewQueue(queue.toDict());
+    //TODO: push notification to the barber
+
     this.setState({ queueAddComplate: true, disable: true });
   };
 

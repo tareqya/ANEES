@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   body: {
-    flex: 3,
+    flex: 2,
     backgroundColor: COLORS.white,
     borderTopEndRadius: 20,
     borderTopStartRadius: 20,
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   logo: {
-    height: 100,
+    height: 150,
     aspectRatio: 1,
   },
   nextBtn: {

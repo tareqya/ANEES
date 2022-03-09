@@ -11,7 +11,7 @@ import Loading from "./src/components/Loading";
 const db = new Database();
 
 export default function App() {
-  const [user, setUser] = useState(getAuth().currentUser);
+  const [currentUser, setCurrentUser] = useState(getAuth().currentUser);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -21,21 +21,19 @@ export default function App() {
         setLoading(true);
         db.onUserInfoChange(user.uid, (item) => {
           if (item != null) {
-            setUser(user);
+            setIsAdmin(item.isAdmin);
+            setCurrentUser(user);
             setLoading(false);
-            if (item.isAdmin == true) {
-              setIsAdmin(true);
-            }
           }
         });
       } else {
-        setUser(null);
+        setCurrentUser(null);
         setLoading(false);
       }
     });
   }, []);
 
-  if (loading && user == null) {
+  if (loading && currentUser == null) {
     return (
       <View style={styles.continer}>
         <Loading />
@@ -44,12 +42,12 @@ export default function App() {
   }
   return (
     <NavigationContainer>
-      {user == null ? (
+      {currentUser == null ? (
         <AuthNavigation />
-      ) : !isAdmin ? (
-        <MainNavigation />
-      ) : (
+      ) : isAdmin == true ? (
         <AdminNavigation />
+      ) : (
+        <MainNavigation />
       )}
     </NavigationContainer>
   );

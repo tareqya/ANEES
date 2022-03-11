@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ANEES",
-    "slug": "ANEES",
+    "slug": "ANEES_app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
@@ -15,9 +15,10 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "bundleIdentifier": "com.anees",
+      "bundleIdentifier": "com.tareqyassin.anees",
+      "googleServicesFile": "./google-services.json",
       "buildNumber": "1.0.0",
-      "supportsTablet": true
+      "supportsTablet": false
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +27,8 @@
       },
       "versionCode": 1,
       "permissions": [],
-      "package": "com.anees"
+      "package": "com.tareqyassin.anees",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/logo.png"

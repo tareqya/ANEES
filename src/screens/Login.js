@@ -1,18 +1,15 @@
 import React, { Component, createRef } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   KeyboardAvoidingView,
   Animated,
   Dimensions,
+  SafeAreaView,
 } from "react-native";
 import { TextInput, HelperText } from "react-native-paper";
 import Entypo from "react-native-vector-icons/Entypo";
-import {
-  FirebaseRecaptchaVerifierModal,
-  FirebaseRecaptchaBanner,
-} from "expo-firebase-recaptcha";
+import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
 import {
   getAuth,
   PhoneAuthProvider,
@@ -182,9 +179,6 @@ class Login extends Component {
       this.db.getUserInfo(user.uid, (userInfo) => {
         if (userInfo == null) {
           this.db.updateUserInfo(user.toDict());
-        } else {
-          user.isAdmin = userInfo.isAdmin;
-          this.db.updateUserInfo(user.toDict());
         }
       });
     } catch (err) {
@@ -207,6 +201,7 @@ class Login extends Component {
 
     return (
       <View style={styles.continer}>
+        <SafeAreaView />
         <FirebaseRecaptchaVerifierModal
           ref={this.recaptchaVerifier}
           firebaseConfig={app.options}
@@ -322,8 +317,7 @@ class Login extends Component {
             name="arrow-bold-right"
             color={COLORS.white}
             style={{ alignSelf: "center" }}
-            size={30}
-            disable={true}
+            size={40}
             onPress={this.handleNextPress}
           />
         </Animated.View>
@@ -366,11 +360,11 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
   },
   nextBtn: {
-    height: 50,
+    height: 60,
     aspectRatio: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 25,
+    borderRadius: 30,
     position: "absolute",
     bottom: height / 20,
     alignSelf: "center",

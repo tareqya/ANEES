@@ -18,6 +18,7 @@ import StoreScreen from "../screens/StoreScreen";
 import TrackerScreen from "../screens/TrackerScreen";
 import AddNewQueue from "../screens/AddNewQueue";
 import PostsScreen from "../screens/PostsScreen";
+import UpdateProfile from "../screens/UpadteProfile";
 
 import { COLORS } from "../../assets/colors";
 
@@ -43,6 +44,19 @@ const TrackerTabStack = () => {
       }}
     >
       <Stack.Screen name="TrackerScreen" component={TrackerScreen} />
+    </Stack.Navigator>
+  );
+};
+
+const ProfileTabStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+      <Stack.Screen name="UpdateProfile" component={UpdateProfile} />
     </Stack.Navigator>
   );
 };
@@ -185,7 +199,7 @@ const MainNavigation = () => {
 
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileTabStack}
         options={() => {
           return {
             tabBarIcon: ({ color, size, focused }) =>

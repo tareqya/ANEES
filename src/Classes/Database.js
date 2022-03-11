@@ -117,9 +117,15 @@ class Database {
     } catch (err) {}
   };
 
-  updateUserInfo = (user) => {
-    const reference = ref(this.db, `Users/${user.uid}`);
-    update(reference, user);
+  updateUserInfo = async (user) => {
+    try {
+      const reference = ref(this.db, `Users/${user.uid}`);
+      await update(reference, user);
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   };
 
   onUserInfoChange = (uid, callBack) => {

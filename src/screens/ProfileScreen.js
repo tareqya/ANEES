@@ -6,12 +6,14 @@ import {
   StyleSheet,
   ScrollView,
   Image,
+  Switch,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 import Feather from "react-native-vector-icons/Feather";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Database from "../Classes/Database";
 import { COLORS } from "../../assets/colors";
@@ -25,24 +27,53 @@ const OPTIONS = [
     title: "פּרוֹפִיל",
     isAdminOption: false,
     icon: <Ionicons name="person-outline" color={COLORS.primary} size={20} />,
+    leftIcon: (
+      <MaterialIcons
+        color={COLORS.primary}
+        size={20}
+        name={isRTL ? "arrow-back-ios" : "arrow-forward-ios"}
+      />
+    ),
   },
-  {
-    name: "settings",
-    title: "הגדרות",
-    isAdminOption: false,
-    icon: <Feather name="settings" color={COLORS.primary} size={20} />,
-  },
+  // {
+  //   name: "settings",
+  //   title: "הגדרות",
+  //   isAdminOption: false,
+  //   icon: <Feather name="settings" color={COLORS.primary} size={20} />,
+  //   leftIcon: (
+  //     <MaterialIcons
+  //       color={COLORS.primary}
+  //       size={20}
+  //       name={isRTL ? "arrow-back-ios" : "arrow-forward-ios"}
+  //     />
+  //   ),
+  // },
+  // {
+  //   name: "sound",
+  //   title: "מוזיקה",
+  //   isAdminOption: false,
+  //   icon: <Feather name="music" color={COLORS.primary} size={20} />,
+  //   leftIcon: null,
+  // },
   {
     name: "manager",
     title: "מנהל",
     isAdminOption: true,
     icon: <EvilIcons name="calendar" color={COLORS.primary} size={20} />,
+    leftIcon: (
+      <MaterialIcons
+        color={COLORS.primary}
+        size={20}
+        name={isRTL ? "arrow-back-ios" : "arrow-forward-ios"}
+      />
+    ),
   },
   {
     name: "logout",
     title: "להתנתק",
     isAdminOption: false,
     icon: <AntDesign name="logout" color={COLORS.danger} size={20} />,
+    leftIcon: null,
   },
 ];
 
@@ -51,13 +82,14 @@ class ProfileScreen extends Component {
     super(props);
     this.state = {
       user: null,
+      musicStatus: true,
     };
     this.db = new Database();
   }
 
   componentDidMount() {
     const uid = this.db.getCurrentUser().uid;
-    this.db.getUserInfo(uid, this.onUserInfoFetchComplate);
+    this.db.onUserInfoChange(uid, this.onUserInfoFetchComplate);
   }
 
   onUserInfoFetchComplate = (user) => {
@@ -67,7 +99,7 @@ class ProfileScreen extends Component {
   onOptionPress = (option) => {
     switch (option.name) {
       case "profile":
-        console.log("profile");
+        this.props.navigation.navigate("UpdateProfile");
         break;
       case "manager":
         console.log("manager");
@@ -83,8 +115,13 @@ class ProfileScreen extends Component {
     }
   };
 
+  handleMusicSwitch = async (value) => {
+    this.setState({ musicStatus: value });
+    AsyncStorage.setItem("music", value);
+  };
+
   render() {
-    const { user } = this.state;
+    const { user, musicStatus } = this.state;
 
     if (user == null) {
       return (
@@ -123,12 +160,16 @@ class ProfileScreen extends Component {
                       {value.icon}
                       <Text style={styles.optionTitle}>{value.title}</Text>
                     </View>
-
-                    <MaterialIcons
-                      color={COLORS.primary}
-                      size={20}
-                      name={isRTL ? "arrow-back-ios" : "arrow-forward-ios"}
-                    />
+                    {value.leftIcon}
+                    {OPTIONS[index].name == "sound" ? (
+                      <Switch
+                        trackColor={{ false: "#767577", true: "#81b0ff" }}
+                        thumbColor={musicStatus ? "#f5dd4b" : "#f4f3f4"}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={this.handleMusicSwitch}
+                        value={musicStatus}
+                      />
+                    ) : null}
                   </TouchableOpacity>
                 )}
               </View>

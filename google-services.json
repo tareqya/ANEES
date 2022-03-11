@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "154066493972",
+    "project_id": "aneesnotifications",
+    "storage_bucket": "aneesnotifications.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:154066493972:android:17894bd5a53476692dfd01",
+        "android_client_info": {
+          "package_name": "com.tareqyassin.anees"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "154066493972-raauofa5dkcba47eigsj28t6tfokv7e6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8zukFFJCpRXXrc_UFOTHZ8vuehMYUbZE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "154066493972-raauofa5dkcba47eigsj28t6tfokv7e6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

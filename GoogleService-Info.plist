@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>154066493972-h30c5nudb3b63fvb6ola1jr0p6rh88u3.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.154066493972-h30c5nudb3b63fvb6ola1jr0p6rh88u3</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBut1qPlsXfmPcxFZKFLteULjcIzA48-U8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>154066493972</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.tareqyassin.anees</string>
+	<key>PROJECT_ID</key>
+	<string>aneesnotifications</string>
+	<key>STORAGE_BUCKET</key>
+	<string>aneesnotifications.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:154066493972:ios:7de9effc56894e932dfd01</string>
+</dict>
+</plist>

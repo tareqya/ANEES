@@ -6,6 +6,7 @@ import {
   Animated,
   Dimensions,
   SafeAreaView,
+  ScrollView,
 } from "react-native";
 import { TextInput, HelperText } from "react-native-paper";
 import Entypo from "react-native-vector-icons/Entypo";
@@ -221,105 +222,112 @@ class Login extends Component {
             ]}
           />
         </Animated.View>
+
         <Animated.View
           style={[
             styles.body,
             { transform: [{ translateY: this.translateYAnimation }] },
           ]}
         >
-          <Animated.View
-            style={{
-              transform: [{ translateX: this.nameTranslateXAnimation }],
-            }}
-          >
-            <KeyboardAvoidingView style={styles.nameWrapper}>
-              <TextInput
-                label="שם פרטי"
-                style={styles.name}
-                mode="outlined"
-                error={firstNameError}
-                activeOutlineColor={COLORS.primary}
-                value={firstName}
-                autoCorrect={false}
-                autoComplete={false}
-                onChangeText={(text) => this.setState({ firstName: text })}
-              />
-              <TextInput
-                label="שם משפחה"
-                style={styles.name}
-                mode="outlined"
-                error={lastNameError}
-                activeOutlineColor={COLORS.primary}
-                value={lastName}
-                autoCorrect={false}
-                autoComplete={false}
-                onChangeText={(text) => this.setState({ lastName: text })}
-              />
-            </KeyboardAvoidingView>
-          </Animated.View>
-          <Animated.View
-            style={{
-              transform: [{ translateX: this.phoneTranslateXAnimation }],
-            }}
-          >
-            <KeyboardAvoidingView>
-              <TextInput
-                label="מספר טלפון"
-                mode="outlined"
-                error={phoneError}
-                placeholder="05XXXXXXXX"
-                style={styles.phone}
-                autoCorrect={false}
-                autoComplete={false}
-                keyboardType="phone-pad"
-                activeOutlineColor={COLORS.primary}
-                value={phone}
-                onChangeText={(text) =>
-                  this.setState({ phone: text, code: "", verificationId: null })
-                }
-              />
-            </KeyboardAvoidingView>
-            {verificationId != null ? (
-              <KeyboardAvoidingView style={styles.codeWrapper}>
+          <ScrollView>
+            <Animated.View
+              style={{
+                transform: [{ translateX: this.nameTranslateXAnimation }],
+              }}
+            >
+              <KeyboardAvoidingView style={styles.nameWrapper}>
                 <TextInput
-                  label="code"
-                  style={styles.code}
+                  label="שם פרטי"
+                  style={styles.name}
                   mode="outlined"
-                  error={codeError}
+                  error={firstNameError}
                   activeOutlineColor={COLORS.primary}
-                  value={code}
+                  value={firstName}
+                  autoCorrect={false}
+                  autoComplete={false}
+                  onChangeText={(text) => this.setState({ firstName: text })}
+                />
+                <TextInput
+                  label="שם משפחה"
+                  style={styles.name}
+                  mode="outlined"
+                  error={lastNameError}
+                  activeOutlineColor={COLORS.primary}
+                  value={lastName}
+                  autoCorrect={false}
+                  autoComplete={false}
+                  onChangeText={(text) => this.setState({ lastName: text })}
+                />
+              </KeyboardAvoidingView>
+            </Animated.View>
+            <Animated.View
+              style={{
+                transform: [{ translateX: this.phoneTranslateXAnimation }],
+              }}
+            >
+              <KeyboardAvoidingView>
+                <TextInput
+                  label="מספר טלפון"
+                  mode="outlined"
+                  error={phoneError}
+                  placeholder="05XXXXXXXX"
+                  style={styles.phone}
                   autoCorrect={false}
                   autoComplete={false}
                   keyboardType="phone-pad"
+                  activeOutlineColor={COLORS.primary}
+                  value={phone}
                   onChangeText={(text) =>
-                    this.setState({ code: text, codeError: false })
+                    this.setState({
+                      phone: text,
+                      code: "",
+                      verificationId: null,
+                    })
                   }
                 />
-                <HelperText type="error" visible={codeError}>
-                  קוד אימות לא נכון
-                </HelperText>
               </KeyboardAvoidingView>
-            ) : null}
-          </Animated.View>
-        </Animated.View>
-        <Animated.View
-          style={[
-            styles.nextBtn,
-            {
-              transform: [
-                { scale: this.clickAnimationRef },
-                { translateX: this.phoneTranslateXAnimation },
-              ],
-            },
-          ]}
-        >
-          <Entypo
-            name="arrow-bold-right"
-            color={COLORS.white}
-            style={{ alignSelf: "center" }}
-            size={40}
-            onPress={this.handleNextPress}
-          />
+              {verificationId != null ? (
+                <KeyboardAvoidingView style={styles.codeWrapper}>
+                  <TextInput
+                    label="code"
+                    style={styles.code}
+                    mode="outlined"
+                    error={codeError}
+                    activeOutlineColor={COLORS.primary}
+                    value={code}
+                    autoCorrect={false}
+                    autoComplete={false}
+                    keyboardType="phone-pad"
+                    onChangeText={(text) =>
+                      this.setState({ code: text, codeError: false })
+                    }
+                  />
+                  <HelperText type="error" visible={codeError}>
+                    קוד אימות לא נכון
+                  </HelperText>
+                </KeyboardAvoidingView>
+              ) : null}
+            </Animated.View>
+            <Animated.View
+              style={[
+                styles.nextBtn,
+                {
+                  transform: [
+                    { scale: this.clickAnimationRef },
+                    { translateX: this.phoneTranslateXAnimation },
+                  ],
+                },
+              ]}
+            >
+              <Entypo
+                name="arrow-bold-right"
+                color={COLORS.white}
+                style={{ alignSelf: "center" }}
+                size={40}
+                onPress={this.handleNextPress}
+              />
+            </Animated.View>
+          </ScrollView>
         </Animated.View>
       </View>
     );
@@ -365,8 +373,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 30,
-    position: "absolute",
-    bottom: height / 20,
+    marginTop: 20,
     alignSelf: "center",
     backgroundColor: COLORS.secondary,
   },

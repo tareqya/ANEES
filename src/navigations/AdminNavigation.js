@@ -15,9 +15,15 @@ import Fontisto from "react-native-vector-icons/Fontisto";
 import HomeScreen from "../screens/adminScreens/HomeScreen";
 import AddNewCustomer from "../screens/adminScreens/AddNewCustomer";
 import ProfileScreen from "../screens/ProfileScreen";
+import UpdateProfile from "../screens/UpadteProfile";
 import StoreScreen from "../screens/StoreScreen";
 import QueuesListScreen from "../screens/adminScreens/QueuesListScreen";
 import AddNewQueueAdmin from "../screens/adminScreens/AddNewQueueAdmin";
+
+import ManagerHome from "../screens/ManagerScreens/ManagerHome";
+import ResetPassword from "../screens/ManagerScreens/ResetPassword";
+import Workers from "../screens/ManagerScreens/Workers";
+
 import { COLORS } from "../../assets/colors";
 
 const Stack = createNativeStackNavigator();
@@ -29,6 +35,36 @@ const HomeTabStack = () => {
       }}
     >
       <Stack.Screen name="Home" component={HomeScreen} />
+    </Stack.Navigator>
+  );
+};
+
+const ManagerStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="ManagerHome" component={ManagerHome} />
+      <Stack.Screen name="ResetPassword" component={ResetPassword} />
+      <Stack.Screen name="AddNewCustomer" component={AddNewCustomer} />
+      <Stack.Screen name="Workers" component={Workers} />
+      <Stack.Screen name="HomeScreen" component={HomeScreen} />
+    </Stack.Navigator>
+  );
+};
+
+const ProfileTabStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+      <Stack.Screen name="UpdateProfile" component={UpdateProfile} />
+      <Stack.Screen name="ManagerStack" component={ManagerStack} />
     </Stack.Navigator>
   );
 };
@@ -162,7 +198,7 @@ const AdminNavigation = () => {
 
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileTabStack}
         options={() => {
           return {
             tabBarIcon: ({ color, size, focused }) =>

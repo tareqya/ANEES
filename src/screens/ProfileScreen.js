@@ -102,8 +102,7 @@ class ProfileScreen extends Component {
         this.props.navigation.navigate("UpdateProfile");
         break;
       case "manager":
-        console.log("manager");
-
+        this.props.navigation.navigate("ManagerStack");
         break;
       case "settings":
         console.log("settings");

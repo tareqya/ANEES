@@ -13,3 +13,4 @@ export const BARBER2 = require("./barber2.jpg");
 export const BARBER3 = require("./barber3.jpg");
 
 export const COMMING_SOON = require("./comming_soon.png");
+export const RESET_PASSWORD = require("./changePassword.png");

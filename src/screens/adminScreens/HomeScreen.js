@@ -46,10 +46,14 @@ class HomeScreen extends Component {
     this.notificationListener = createRef();
     this.responseListener = createRef();
     this.db = new Database();
-    this.barberId = this.db.getCurrentUser().uid;
+    this.barberId =
+      this.props.route.params?.uid || this.db.getCurrentUser().uid;
   }
 
   componentWillUnmount() {
+    this.props.navigation.getParent().getParent()?.setOptions({
+      headerShown: false,
+    });
     this.notificationListener.current &&
       Notifications.removeNotificationSubscription(
         this.notificationListener.current
@@ -61,6 +65,9 @@ class HomeScreen extends Component {
   }
 
   componentDidMount() {
+    this.props.navigation.getParent().getParent()?.setOptions({
+      headerShown: true,
+    });
     const uid = this.db.getCurrentUser().uid;
     this.db.getUserInfo(uid, async (user) => {
       const token = await getNotificationToken();

@@ -21,7 +21,7 @@ import Verify from "../components/Verify";
 import Loading from "../components/Loading";
 
 import { COLORS } from "../../assets/colors";
-import { triggerNotification } from "../utils/notifactions";
+import { sendNotification, triggerNotification } from "../utils/notifactions";
 
 import {
   convertDateToString,
@@ -174,8 +174,14 @@ class AddNewQueue extends Component {
 
     queue.notification_id = notification_id;
     this.db.addNewQueue(queue.toDict());
-    //TODO: push notification to the barber
 
+    if (
+      selectedBarber.token != null &&
+      selectedBarber.token != undefined &&
+      selectedBarber.token != ""
+    ) {
+      sendNotification(selectedBarber.token, "ANEES", "תור חדש ממתין לאישור");
+    }
     this.setState({ queueAddComplate: true, disable: true });
   };
 

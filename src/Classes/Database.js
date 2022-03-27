@@ -11,6 +11,7 @@ import {
   remove,
   get,
   update,
+  set,
 } from "firebase/database";
 import * as StorageDB from "firebase/storage";
 import { getAuth } from "firebase/auth";
@@ -361,6 +362,28 @@ class Database {
       );
     } catch (err) {
       callBack(null);
+    }
+  };
+
+  getManagerCode = (callBack) => {
+    const reference = ref(this.db, "Globals/managerCode");
+    onValue(
+      reference,
+      (snapshot) => {
+        callBack(snapshot.val());
+      },
+      { onlyOnce: true }
+    );
+  };
+
+  updateManagerPassword = async (code) => {
+    try {
+      const reference = ref(this.db, "Globals");
+      await update(reference, { managerCode: code });
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
     }
   };
 

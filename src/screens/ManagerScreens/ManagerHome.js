@@ -31,6 +31,11 @@ const OPTIONS = [
     title: "הוספת משתמש חדש",
     name: "AddNewCustomer",
   },
+  {
+    id: "4",
+    title: "הוסיף פוסט חדש",
+    name: "AddNewPost",
+  },
 ];
 class ManagerHome extends Component {
   constructor(props) {
@@ -90,6 +95,9 @@ class ManagerHome extends Component {
         break;
       case "Workers":
         this.props.navigation.navigate("Workers");
+        break;
+      case "AddNewPost":
+        this.props.navigation.navigate("AddNewPost");
         break;
       default:
         break;

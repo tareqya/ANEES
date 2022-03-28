@@ -23,6 +23,7 @@ import AddNewQueueAdmin from "../screens/adminScreens/AddNewQueueAdmin";
 import ManagerHome from "../screens/ManagerScreens/ManagerHome";
 import ResetPassword from "../screens/ManagerScreens/ResetPassword";
 import Workers from "../screens/ManagerScreens/Workers";
+import AddNewPost from "../screens/ManagerScreens/AddNewPost";
 
 import { COLORS } from "../../assets/colors";
 
@@ -51,6 +52,7 @@ const ManagerStack = () => {
       <Stack.Screen name="AddNewCustomer" component={AddNewCustomer} />
       <Stack.Screen name="Workers" component={Workers} />
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name="AddNewPost" component={AddNewPost} />
     </Stack.Navigator>
   );
 };

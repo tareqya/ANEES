@@ -105,7 +105,7 @@ class HomeScreen extends Component {
               </Text>
             </View>
           </View>
-          <View style={styles.newsWrapper}>
+          {/* <View style={styles.newsWrapper}>
             <FAB
               style={styles.news}
               small
@@ -114,7 +114,7 @@ class HomeScreen extends Component {
               color={COLORS.white}
               onPress={() => this.props.navigation.navigate("PostsScreen")}
             />
-          </View>
+          </View> */}
           <View style={styles.body}>
             <View style={styles.salonImageWrapper}>
               <Image

@@ -397,6 +397,11 @@ class Database {
       return null;
     }
   };
+
+  addNewPost = (post) => {
+    const reference = ref(this.db, "Posts");
+    push(reference, post);
+  };
 }
 
 export default Database;

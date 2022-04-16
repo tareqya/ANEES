@@ -102,6 +102,7 @@ class TrackerScreen extends Component {
       const supported = await Linking.canOpenURL(link);
 
       if (supported) Linking.openURL(link);
+      else alert("לא ניתן לפתוח המפה");
     } catch (error) {
       console.log(error);
     }

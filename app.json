@@ -2,14 +2,14 @@
   "expo": {
     "name": "ANEES",
     "slug": "ANEES_app",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "plugins": [
       [
         "expo-notifications",
         {
-          "icon": "./assets/icon.png",
+          "icon": "./assets/adaptive-icon.png",
           "color": "#ffffff"
         }
       ]
@@ -26,15 +26,15 @@
     "ios": {
       "bundleIdentifier": "com.tareqyassin.anees",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "1.0.0",
+      "buildNumber": "1.0.2",
       "supportsTablet": false
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "versionCode": 1,
+      "versionCode": 3,
       "permissions": [],
       "package": "com.tareqyassin.anees",
       "googleServicesFile": "./google-services.json"

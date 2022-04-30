@@ -22,7 +22,7 @@ export const MONTHS = [
 ];
 
 export const OPEN_TIME = "9:00";
-export const CLOSE_TIME = "9:00";
+export const CLOSE_TIME = "21:00";
 
 export const SERVICES = [
   { id: "1", name: HAIRCUT, imageUrl: SCISSOR_IMAGE, time: 30 },

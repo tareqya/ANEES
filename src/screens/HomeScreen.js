@@ -130,7 +130,7 @@ class HomeScreen extends Component {
                 <EvilIcons size={30} color={COLORS.lightText} name="location" />
               </View>
               <View style={styles.locationWrapper}>
-                <Text style={styles.locationText}>21:00 PM - 9:00 AM</Text>
+                <Text style={styles.locationText}>09:00 PM - 9:00 AM</Text>
                 <EvilIcons size={30} color={COLORS.lightText} name="clock" />
               </View>
             </View>
